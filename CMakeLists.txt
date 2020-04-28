@@ -1,6 +1,17 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.0)
 
 project (VizSTARE)
+
+find_package(Coin REQUIRED)
+message( "test: COIN_NAME  ${COIN_NAME}" )
+message( "test: COIN_VERSION  ${COIN_VERSION}" )
+
+find_package(SoQt REQUIRED)
+message( "test: SOQT_VERSION  ${SOQT_VERSION}" )
+
+find_package(Qt5 REQUIRED COMPONENTS Widgets Core OpenGL Gui )
+
+if( NOT Coin_FOUND )
 
 if( NOT DEFINED ENV{COIN3D_CONFIG_COMMAND} )
   include(FindCoin3D)
@@ -45,9 +56,14 @@ else()
   message( "LINKFLAGS: ${COIN3D_LINKFLAGS}" )
   message( "LINKLIBS:  ${COIN3D_LINKLIBS}"  )  
   
-  endif()
+endif()
 
 set( COIN3D_CFLAGS "" )
+
+else()
+# Coin_FOUND
+
+endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set( STARE_CPPFLAGS  "-std=c++11 -g -Wall -D_BOOL_EXISTS -D__macosx -UDIAGNOSE -fPIC -I/home/mrilee/workspace/STARE-CMAKE/include/" )
@@ -74,10 +90,11 @@ message( "CMAKE_EXE_LINKER_FLAGS = ${CMAKE_EXE_LINKER_FLAGS}" )
 # add_executable(VizSTARE VizSTARE.cpp)
 # add_library( VizSTARE STATIC ${STARE_SrcFiles} )
 add_library( VizSTARE STATIC VizSTARE.cpp )
-
+target_include_directories( VizSTARE PUBLIC VizSTARE /usr/include /usr/include/qt5 /usr/include/qt5/QtCore /usr/include/qt5/QtGui /usr/local/Coin3D/include )
 
 add_executable(      VizSTARE_TestIntervals VizSTARE_TestIntervals.cpp )
-target_link_libraries( VizSTARE_TestIntervals VizSTARE )
-
+target_link_libraries( VizSTARE_TestIntervals VizSTARE SoQt::SoQt )
+# target_link_libraries(VizHTM_main SoQt::SoQt VizHTM_LIB ${STARE_LINK_LIB} ${GEOMPACK_LIBRARY_LIB} ${HDF_LIBRARIES} shp gfortran erfa )
+target_include_directories( VizSTARE_TestIntervals PUBLIC VizSTARE /usr/include /usr/include/qt5 /usr/include/qt5/QtCore /usr/include/qt5/QtGui /usr/local/Coin3D/include )
 
 

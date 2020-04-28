@@ -19,6 +19,13 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 //#include <Inventor/Qt/viewers/SoQtFlyViewer.h>
 
+#include <Inventor/nodes/SoCamera.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+//#include <Inventor/nodes/SoOrthographicCamera.h>
+
+#include <Inventor/nodes/SoNode.h>
+#include <Inventor/nodes/SoDirectionalLight.h>
+
 using namespace std;
 
 int main(int argc, char **argv) {
@@ -34,7 +41,16 @@ int main(int argc, char **argv) {
 
 	SoSeparator* root = viz.makeRoot();
 
-	// root->addChild(viz.makeSphere());
+    SoDirectionalLight * light = new SoDirectionalLight;
+    root->addChild(light);
+
+    SoPerspectiveCamera *camera = new SoPerspectiveCamera;
+	camera->pointAt(SbVec3f(0.,0.,0.));
+    camera->nearDistance = 0.0001;
+
+    root->addChild(camera); // perscam
+
+	root->addChild(viz.makeSphere());
 
 	SoQtExaminerViewer *viewer = new SoQtExaminerViewer(window);
 	viewer->setSceneGraph(root);
